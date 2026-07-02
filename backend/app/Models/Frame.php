@@ -13,6 +13,11 @@ class Frame extends Model
         'borderWidth',
         'titleText',
         'bottomText',
-        'fontSize'
+        'fontSize',
+        'shapes',
+        'contentWidth',
+    ];
+    protected $casts = [
+        'shapes' => 'array',
     ];
 }

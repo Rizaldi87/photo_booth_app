@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Dashboard from "../../components/admin/Dashboard";
 import LayoutContent from "../../components/admin/LayoutContent";
 import FrameContent from "../../components/admin/FrameContent";
@@ -49,6 +49,9 @@ type sideBarProps = {
   setSelectedMenu: (selctedMenu: number) => void;
 };
 function SideBar({ selectedMenu, setSelectedMenu }: sideBarProps) {
+  useEffect(() => {
+    document.title = "Admin Photo Booth App";
+  });
   return (
     <div className="w-64 shrink-0 h-full bg-[#111111] border-r border-[#292929] flex flex-col items-center">
       <div className="w-full p-6 py-12 border-b border-[#292929] font-mono">

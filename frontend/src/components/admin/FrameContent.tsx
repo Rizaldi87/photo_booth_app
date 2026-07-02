@@ -99,6 +99,7 @@ export default function FrameContent() {
         <button
           onClick={() => {
             // setSelectedLayout(null);
+            setSelectedFrame(null);
             setModalMode("create");
             setModalActive(true);
           }}
@@ -112,7 +113,7 @@ export default function FrameContent() {
           <LoadingBar />
         ) : (
           // display all frames
-          <div className="grid grid-cols-4 gap-4 mt-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-8 items-center align-middle">
             {frames.map((frame) => (
               <div
                 key={frame.id}
@@ -184,6 +185,7 @@ export default function FrameContent() {
             </div>
           ) : (
             <FrameEditor
+              key={selectedFrame?.id ?? "new"}
               initialData={selectedFrame ?? undefined}
               onSubmit={(data) => {
                 if (modalMode === "create") {

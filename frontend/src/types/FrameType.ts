@@ -82,4 +82,24 @@ export type Frame = {
   titleText: string;
   bottomText: string;
   fontSize: number;
+  shapes?: Shape[];
+  contentWidth?: number;
+};
+
+export type Shape = {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  rotation: number;
+};
+
+export type ShapeRendererProps = {
+  width: number | string;
+  height: number | string;
+  color: string;
+  rotation?: number;
 };

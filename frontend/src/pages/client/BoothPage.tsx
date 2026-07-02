@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StartPage from "../../components/client/steps/StartPage";
 import LayoutStep from "../../components/client/steps/LayoutStep";
 import type { Layout } from "../../types/LayouOutType";
@@ -34,6 +34,10 @@ export default function BoothPage() {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [selectedLayout, setSelectedLayout] = useState<Layout | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
+
+  useEffect(() => {
+    document.title = "Photo Booth App";
+  });
 
   const CurrentPage = stepPages[currentStep].page;
 
