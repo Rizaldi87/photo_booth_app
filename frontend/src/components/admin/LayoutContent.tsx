@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import type { Layout } from "../../types/LayouOutType";
@@ -7,6 +6,7 @@ import LayoutForm from "./LayoutForm";
 import LayoutPreview from "../LayoutPreview";
 import toast from "react-hot-toast";
 import LoadingBar from "../LoadingBar";
+import api from "../../lib/axios";
 
 type ModalMode = "create" | "edit" | "delete";
 
@@ -23,7 +23,7 @@ export default function LayoutContent() {
 
   const handleCreate = async (data: Partial<Layout>) => {
     try {
-      const response = await axios.post("api/layouts", data);
+      const response = await api.post("/layouts", data);
 
       if (modalActive) {
         setModalActive(false);
@@ -39,7 +39,7 @@ export default function LayoutContent() {
 
   const handleUpdate = async (data: Partial<Layout>) => {
     try {
-      const res = await axios.put(`api/layouts/${selectedLayout?.id}`, data);
+      const res = await api.put(`/layouts/${selectedLayout?.id}`, data);
       if (modalActive) {
         setModalActive(false);
       }
@@ -54,7 +54,7 @@ export default function LayoutContent() {
 
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(`api/layouts/${selectedLayout?.id}`);
+      const res = await api.delete(`/layouts/${selectedLayout?.id}`);
 
       if (modalActive) {
         setModalActive(false);
@@ -70,7 +70,7 @@ export default function LayoutContent() {
 
   const fetchLayout = async () => {
     try {
-      const res = await axios.get("/api/layouts");
+      const res = await api.get("/layouts");
 
       console.log(res.data);
       setLayouts(res.data);

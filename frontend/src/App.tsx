@@ -5,6 +5,9 @@ import { Toaster } from "react-hot-toast";
 import LayoutContent from "./components/admin/LayoutContent";
 import FrameContent from "./components/admin/FrameContent";
 import Dashboard from "./components/admin/Dashboard";
+import LoginPage from "./pages/auth/LoginPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import RoleGuard from "./routes/RoleGuard";
 
 function App() {
   return (
@@ -31,11 +34,16 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<BoothPage />} />
+          <Route path="/login" element={<LoginPage />} />
 
-          <Route path="/admin" element={<AdminPage />}>
-            <Route index element={<Dashboard />} />
-            <Route path="layout" element={<LayoutContent />} />
-            <Route path="frames" element={<FrameContent />} />
+          <Route element={<ProtectedRoute />}>
+            <Route element={<RoleGuard allowedRoles={["admin", "operator"]} />}>
+              <Route path="/admin" element={<AdminPage />}>
+                <Route index element={<Dashboard />} />
+                <Route path="layout" element={<LayoutContent />} />
+                <Route path="frames" element={<FrameContent />} />
+              </Route>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

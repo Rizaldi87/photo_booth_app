@@ -10,13 +10,15 @@ Route::get('/test', function () {
         'message' => 'API works!'
     ]);
 });
-
-Route::post('/login', [AuthController::class, 'login']);
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+Route::middleware('web')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+    });
 });
+
+
 
 Route::get('/layouts/active', [LayoutController::class, 'getActive']);
 Route::apiResource('layouts', LayoutController::class);

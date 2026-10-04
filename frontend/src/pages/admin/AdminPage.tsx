@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 const navbarList = [
   {
     title: "Dashboard",
@@ -41,9 +42,15 @@ export default function AdminPage() {
 }
 
 function SideBar() {
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
     document.title = "Admin Photo Booth App";
-  });
+  }, []);
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
   return (
     <div className="w-64 shrink-0 h-full bg-[#111111] border-r border-[#292929] flex flex-col items-center">
       <div className="w-full p-6 py-12 border-b border-[#292929] font-mono">
@@ -66,6 +73,14 @@ function SideBar() {
               {item.title}
             </NavLink>
           ))}
+          <div className="w-full p-6 py-8 font-mono border-t border-[#292929] mt-auto">
+            <span className="text-xs text-[#363636]">Logged in as</span>
+            <br />
+            <span className="text-sm text-[#555250]">{user?.email || "admin@pixelbooth.id"}</span>
+            <button onClick={handleLogout} className="mt-3 w-full text-left text-xs text-[#676666] hover:text-[#C9A84C] cursor-pointer">
+              → Logout
+            </button>
+          </div>
         </ul>
       </div>
       <div className="w-full p-6 py-12 font-mono">
