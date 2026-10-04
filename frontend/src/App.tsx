@@ -2,6 +2,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import BoothPage from "./pages/client/BoothPage";
 import AdminPage from "./pages/admin/AdminPage";
 import { Toaster } from "react-hot-toast";
+import LayoutContent from "./components/admin/LayoutContent";
+import FrameContent from "./components/admin/FrameContent";
+import Dashboard from "./components/admin/Dashboard";
 
 function App() {
   return (
@@ -29,7 +32,11 @@ function App() {
         <Routes>
           <Route path="/" element={<BoothPage />} />
 
-          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin" element={<AdminPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="layout" element={<LayoutContent />} />
+            <Route path="frames" element={<FrameContent />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

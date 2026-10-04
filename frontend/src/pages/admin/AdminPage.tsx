@@ -1,54 +1,46 @@
-import { useEffect, useState } from "react";
-import Dashboard from "../../components/admin/Dashboard";
-import LayoutContent from "../../components/admin/LayoutContent";
-import FrameContent from "../../components/admin/FrameContent";
+import { useEffect } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 const navbarList = [
   {
     title: "Dashboard",
-    page: Dashboard,
+    page: ".",
   },
   {
     title: "Photo Layout",
-    page: LayoutContent,
+    page: "layout",
   },
   {
     title: "Frame Library",
-    page: FrameContent,
+    page: "frames",
   },
   {
     title: "Transactions",
-    page: () => <div>Transactions</div>,
+    page: "transactions",
   },
   {
     title: "Monthly Reports",
-    page: () => <div>Monthly Reports</div>,
+    page: "reports",
   },
   {
     title: "Settings",
-    page: () => <div>Settings</div>,
+    page: "settings",
   },
 ];
 
 export default function AdminPage() {
-  const [selectedMenu, setSelectedMenu] = useState<number>(0);
-  const CurrentPage = navbarList[selectedMenu].page;
   return (
     <div className="relative w-full h-screen flex bg-black">
       {/* side navbar */}
-      <SideBar selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
+      <SideBar />
       {/* main content */}
       <main className="flex-1 min-w-0 overflow-auto">
-        <CurrentPage />
+        <Outlet />
       </main>
     </div>
   );
 }
 
-type sideBarProps = {
-  selectedMenu: number;
-  setSelectedMenu: (selctedMenu: number) => void;
-};
-function SideBar({ selectedMenu, setSelectedMenu }: sideBarProps) {
+function SideBar() {
   useEffect(() => {
     document.title = "Admin Photo Booth App";
   });
@@ -62,15 +54,17 @@ function SideBar({ selectedMenu, setSelectedMenu }: sideBarProps) {
       <div className="w-full h-full p-6 py-12 border-b border-[#292929] font-mono">
         <ul className="flex flex-col items-center gap-1">
           {navbarList.map((item, index) => (
-            <li
+            <NavLink
               key={index}
-              onClick={() => setSelectedMenu(index)}
-              className={`w-full text-[#676666] cursor-pointer 
-                ${selectedMenu === index ? "border border-[#C9A84C] bg-[#1E1A12] text-[#C9A84C]" : ""}
+              to={item.page}
+              end={item.page === "."}
+              className={({ isActive }) => `w-full text-[#676666] cursor-pointer 
+                ${isActive ? "border border-[#C9A84C] bg-[#1E1A12] text-[#C9A84C]" : ""}
              p-2`}
+              preventScrollReset
             >
               {item.title}
-            </li>
+            </NavLink>
           ))}
         </ul>
       </div>
