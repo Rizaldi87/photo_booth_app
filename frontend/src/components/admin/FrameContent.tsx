@@ -3,10 +3,10 @@ import { FaPlus } from "react-icons/fa";
 import AdminModal from "./AdminModal";
 import type { Frame } from "../../types/FrameType";
 import FrameEditor from "./FrameEditor";
-import axios from "axios";
 import toast from "react-hot-toast";
 import FramePreview from "../FramePreview";
 import LoadingBar from "../LoadingBar";
+import { createFrame, deleteFrame, updateFrame, fetchFrames as fetchFramesApi } from "../../lib/frame";
 
 type ModalMode = "create" | "edit" | "delete";
 
@@ -23,13 +23,13 @@ export default function FrameContent() {
   const handleCreate = async (data: Partial<Frame>) => {
     try {
       console.log(data);
-      const res = await axios.post("api/frames", data);
+      const res = await createFrame(data);
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(res.data.message);
+      toast.success(res.message);
       await fetchFrames();
-      console.log("Frame created:", res.data);
+      console.log("Frame created:", res);
     } catch (error) {
       toast.error("Failed to create Frame");
       console.error("Failed to create Frame:", error);
@@ -38,12 +38,12 @@ export default function FrameContent() {
 
   const handleUpdate = async (data: Partial<Frame>) => {
     try {
-      const res = await axios.put(`/api/frames/${selectedFrame?.id}`, data);
+      const res = await updateFrame(selectedFrame?.id as number, data);
 
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(res.data.message);
+      toast.success(res.message);
       await fetchFrames();
     } catch (error) {
       console.error(error);
@@ -54,13 +54,13 @@ export default function FrameContent() {
 
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(`api/frames/${selectedFrame?.id}`);
+      const res = await deleteFrame(selectedFrame?.id as number);
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(res.data.message);
+      toast.success(res.message);
       await fetchFrames();
-      console.log("Frame created:", res.data);
+      console.log("Frame created:", res);
     } catch (error) {
       toast.error("Failed to create Frame");
       console.error("Failed to create Frame:", error);
@@ -69,9 +69,9 @@ export default function FrameContent() {
 
   const fetchFrames = async () => {
     try {
-      const res = await axios.get("/api/frames");
+      const res = await fetchFramesApi();
 
-      setFrames(res.data);
+      setFrames(res);
     } catch (error) {
       console.error(error);
     } finally {

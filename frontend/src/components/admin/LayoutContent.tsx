@@ -6,7 +6,7 @@ import LayoutForm from "./LayoutForm";
 import LayoutPreview from "../LayoutPreview";
 import toast from "react-hot-toast";
 import LoadingBar from "../LoadingBar";
-import api from "../../lib/axios";
+import { createLayout, deleteLayout, fetchLayouts, updateLayout } from "../../lib/layout";
 
 type ModalMode = "create" | "edit" | "delete";
 
@@ -23,14 +23,14 @@ export default function LayoutContent() {
 
   const handleCreate = async (data: Partial<Layout>) => {
     try {
-      const response = await api.post("/layouts", data);
+      const response = await createLayout(data);
 
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(response.data.message);
+      toast.success(response.message);
       await fetchLayout();
-      console.log("Layout created:", response.data);
+      console.log("Layout created:", response);
     } catch (error) {
       toast.error("Failed to create Layout");
       console.error("Failed to create layout:", error);
@@ -39,13 +39,13 @@ export default function LayoutContent() {
 
   const handleUpdate = async (data: Partial<Layout>) => {
     try {
-      const res = await api.put(`/layouts/${selectedLayout?.id}`, data);
+      const res = await updateLayout(selectedLayout?.id as number, data);
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(res.data.message);
+      toast.success(res.message);
       await fetchLayout();
-      console.log(`layout ${selectedLayout?.name} updated: `, res.data);
+      console.log(`layout ${selectedLayout?.name} updated: `, res);
     } catch (error) {
       toast.error("Failed to update Layout");
       console.error("Failed to update layout:", error);
@@ -54,14 +54,14 @@ export default function LayoutContent() {
 
   const handleDelete = async () => {
     try {
-      const res = await api.delete(`/layouts/${selectedLayout?.id}`);
+      const res = await deleteLayout(selectedLayout?.id as number);
 
       if (modalActive) {
         setModalActive(false);
       }
-      toast.success(res.data.message);
+      toast.success(res.message);
       fetchLayout();
-      console.log("Layout deleted:", res.data);
+      console.log("Layout deleted:", res);
     } catch (error) {
       toast.error("Failed to delete Layout");
       console.error("Failed to delete layout:", error);
@@ -70,10 +70,10 @@ export default function LayoutContent() {
 
   const fetchLayout = async () => {
     try {
-      const res = await api.get("/layouts");
+      const res = await fetchLayouts();
 
-      console.log(res.data);
-      setLayouts(res.data);
+      console.log(res);
+      setLayouts(res);
     } catch (error) {
       console.error(error);
     } finally {
