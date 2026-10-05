@@ -4,22 +4,35 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LayoutController;
 use App\Http\Controllers\Api\FrameController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 Route::get('/test', function () {
     return response()->json([
         'message' => 'API works!'
     ]);
 });
-Route::middleware('web')->group(function () {
-    Route::post('/login', [AuthController::class, 'login']);
+// Auth routes (butuh session + stateful)
+Route::middleware(EnsureFrontendRequestsAreStateful::class)->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 });
 
-
-
+// Public (booth)
 Route::get('/layouts/active', [LayoutController::class, 'getActive']);
-Route::apiResource('layouts', LayoutController::class);
-Route::apiResource('frames', FrameController::class);
+Route::get('/layouts/{layout}', [LayoutController::class, 'show']);
+Route::get('/frames', [FrameController::class, 'index']);
+Route::get('/frames/{frame}', [FrameController::class, 'show']);
+
+// Protected - Admin & Operator (stateful + auth + role)
+Route::middleware([
+    EnsureFrontendRequestsAreStateful::class,
+    'auth:sanctum',
+    'role:admin,operator'
+])->group(function () {
+    Route::apiResource('layouts', LayoutController::class)->except(['show']);
+    Route::apiResource('frames', FrameController::class)->except(['show']);
+});
