@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\LayoutController;
 use App\Http\Controllers\Api\FrameController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
@@ -26,6 +27,11 @@ Route::get('/layouts/active', [LayoutController::class, 'getActive']);
 Route::get('/layouts/{layout}', [LayoutController::class, 'show']);
 Route::get('/frames', [FrameController::class, 'index']);
 Route::get('/frames/{frame}', [FrameController::class, 'show']);
+
+// Payment routes (public)
+Route::post('/payments/create', [PaymentController::class, 'create']);
+Route::post('/payments/notification', [PaymentController::class, 'notification']); // webhook Midtrans - public
+Route::get('/payments/{orderId}/status', [PaymentController::class, 'status']);
 
 // Protected - Admin & Operator (stateful + auth + role)
 Route::middleware([

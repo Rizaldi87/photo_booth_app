@@ -1,0 +1,9 @@
+# Frontend
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Backend Laravel
+backend/.env
+backend/.env.*
+!backend/.env.example
