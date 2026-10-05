@@ -30,3 +30,13 @@ export async function getPaymentStatus(orderId: string) {
   const res = await api.get<PaymentStatusResponse>(`/payments/${orderId}/status`);
   return res.data;
 }
+
+export async function verifyPaymentStatus(orderId: string) {
+  const res = await api.get<PaymentStatusResponse>(`/payments/${orderId}/verify`);
+  return res.data;
+}
+
+export async function confirmPayment(orderId: string) {
+  const res = await api.post<PaymentStatusResponse>(`/payments/${orderId}/verify`);
+  return res.data;
+}

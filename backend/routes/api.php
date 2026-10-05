@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\LayoutController;
 use App\Http\Controllers\Api\FrameController;
+use App\Http\Controllers\Api\LayoutController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
@@ -32,7 +32,7 @@ Route::get('/frames/{frame}', [FrameController::class, 'show']);
 Route::post('/payments/create', [PaymentController::class, 'create']);
 Route::post('/payments/notification', [PaymentController::class, 'notification']); // webhook Midtrans - public
 Route::get('/payments/{orderId}/status', [PaymentController::class, 'status']);
-
+Route::get('/payments/{orderId}/verify', [PaymentController::class, 'verify']); // verify payment status - public
 // Protected - Admin & Operator (stateful + auth + role)
 Route::middleware([
     EnsureFrontendRequestsAreStateful::class,
@@ -41,4 +41,5 @@ Route::middleware([
 ])->group(function () {
     Route::apiResource('layouts', LayoutController::class)->except(['show']);
     Route::apiResource('frames', FrameController::class)->except(['show']);
+    Route::get('/transactions', [PaymentController::class, 'index']);
 });

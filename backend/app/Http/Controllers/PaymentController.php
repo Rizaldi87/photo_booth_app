@@ -147,6 +147,73 @@ class PaymentController extends Controller
         ]);
     }
 
+    public function verify(string $orderId)
+    {
+        $transaction = ClientTransaction::where(
+            'midtrans_order_id',
+            $orderId
+        )->firstOrFail();
+
+        try {
+            $status = Transaction::status($orderId);
+
+            $transactionStatus = $status->transaction_status ?? null;
+            $fraudStatus = $status->fraud_status ?? null;
+
+            $data = [
+                'transaction_id' => $status->transaction_id ?? null,
+                'payment_type' => $status->payment_type ?? null,
+                'fraud_status' => $fraudStatus,
+            ];
+
+            if (
+                $transactionStatus === 'capture' ||
+                $transactionStatus === 'settlement'
+            ) {
+                if ($fraudStatus === 'challenge') {
+                    $data['midtrans_status'] = 'challenge';
+                } else {
+                    $data['midtrans_status'] = 'settlement';
+
+                    if (!$transaction->paid_at) {
+                        $data['paid_at'] = now();
+                    }
+                }
+            } elseif ($transactionStatus === 'pending') {
+                $data['midtrans_status'] = 'pending';
+            } elseif ($transactionStatus === 'expire') {
+                $data['midtrans_status'] = 'expire';
+            } elseif ($transactionStatus === 'cancel') {
+                $data['midtrans_status'] = 'cancel';
+            } elseif ($transactionStatus === 'deny') {
+                $data['midtrans_status'] = 'deny';
+            } elseif ($transactionStatus === 'failure') {
+                $data['midtrans_status'] = 'failure';
+            } else {
+                $data['midtrans_status'] = $transactionStatus;
+            }
+
+            $transaction->update($data);
+            $transaction->refresh();
+
+            return response()->json([
+                'message' => 'Transaction verified',
+                'data' => [
+                    'order_id' => $transaction->midtrans_order_id,
+                    'status' => $transaction->midtrans_status,
+                    'amount' => $transaction->amount,
+                    'transaction_id' => $transaction->transaction_id,
+                    'paid_at' => $transaction->paid_at,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to verify transaction',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function index()
     {
         $transactions = ClientTransaction::with(['layout:id,name', 'frame:id,name'])

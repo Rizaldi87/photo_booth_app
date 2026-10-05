@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import type { Frame } from "../../../types/FrameType";
 import type { Layout } from "../../../types/LayouOutType";
-import { createPayment } from "../../../lib/payment";
+import { createPayment, verifyPaymentStatus } from "../../../lib/payment";
 import toast from "react-hot-toast";
 
 type PayStepProps = {
@@ -69,11 +69,22 @@ export default function PayStep({ currentStep, setCurrentStep, selectedLayout, s
       });
 
       window.snap.pay(res.snap_token, {
-        onSuccess: function (result: any) {
-          toast.success("Pembayaran berhasil!");
-          // Lanjut ke step Capture (index 4)
-          setCurrentStep(currentStep + 1);
-          console.log("payment success", result);
+        onSuccess: async function (result: any) {
+          try {
+            console.log("Snap result:", result);
+
+            const res = await verifyPaymentStatus(result.order_id);
+
+            console.log("Verify result:", res);
+
+            if (res?.data.status === "settlement" || res?.data.status === "capture") {
+              toast.success("Pembayaran berhasil!");
+              setCurrentStep((prev) => prev + 1);
+            }
+          } catch (error) {
+            console.error("Verify payment error:", error);
+            toast.error("Gagal memverifikasi pembayaran");
+          }
         },
         onPending: function (result: any) {
           toast("Menunggu pembayaran...", { icon: "⏳" });
@@ -145,7 +156,9 @@ export default function PayStep({ currentStep, setCurrentStep, selectedLayout, s
         </div>
         <div className="w-80 h-fit bg-[#161616] border border-[#262626] p-6 rounded-sm">
           <div className="flex flex-col gap-3 mb-4">
-            <label htmlFor="clientName" className="text-[#555250] text-xs font-mono">Nama Pemesan</label>
+            <label htmlFor="clientName" className="text-[#555250] text-xs font-mono">
+              Nama Pemesan
+            </label>
             <input
               id="clientName"
               type="text"

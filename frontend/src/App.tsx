@@ -4,6 +4,7 @@ import AdminPage from "./pages/admin/AdminPage";
 import { Toaster } from "react-hot-toast";
 import LayoutContent from "./components/admin/LayoutContent";
 import FrameContent from "./components/admin/FrameContent";
+import TransactionContent from "./components/admin/TransactionContent";
 import Dashboard from "./components/admin/Dashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -42,6 +43,7 @@ function App() {
                 <Route index element={<Dashboard />} />
                 <Route path="layout" element={<LayoutContent />} />
                 <Route path="frames" element={<FrameContent />} />
+                <Route path="transactions" element={<TransactionContent />} />
               </Route>
             </Route>
           </Route>
